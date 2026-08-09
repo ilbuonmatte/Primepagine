@@ -7,8 +7,8 @@ app = Flask(__name__)
 
 # Pagine sorgente (una per giornale) e cache in memoria
 FONTI = {
-    "libero": "https://www.giornalone.it/prima-pagina-libero/",
-    "laverita": "https://www.giornalone.it/prima-pagina-la-verita/",
+    "libero": "https://thefrontpager.com/it/libero-quotidiano/",
+    "laverita": "https://thefrontpager.com/it/la-verita/",
 }
 
 _cache = {}  # es: {"libero": {"bytes": ..., "content_type": ..., "ts": 12345}}
