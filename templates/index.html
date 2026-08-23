@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Pagine dei Giornali</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f2f2f2; margin:0; padding:20px; }
+  h1 { text-align:center; color:#222; }
+  .grid { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:flex-start; }
+  .card { position:relative; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.15); overflow:hidden; width:420px; max-width:95vw; }
+  .card h2 { margin:0; padding:12px 40px 12px 12px; background:#111; color:#fff; font-size:18px; text-align:center; }
+  .card img { width:100%; height:auto; display:block; object-fit:contain; cursor:zoom-in; }
+  .data { text-align:center; padding:8px; font-size:13px; color:#666; }
+
+  .stella { position:absolute; top:6px; right:10px; background:none; border:none; font-size:22px;
+            cursor:pointer; color:#666; line-height:1; padding:4px; }
+  .stella.attiva { color:gold; }
+
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85);
+             align-items:center; justify-content:center; z-index:999; cursor:zoom-out; padding:20px; box-sizing:border-box; }
+  .overlay.attivo { display:flex; }
+  .overlay img { max-width:100%; max-height:100%; border-radius:6px; }
+</style>
+</head>
+<body>
+<h1>📰 Prime Pagine di Oggi</h1>
+<div class="grid" id="grid">
+  {% for chiave, nome in giornali.items() %}
+  <div class="card" data-chiave="{{ chiave }}">
+    <button class="stella" onclick="toggleFavorito('{{ chiave }}', this)">★</button>
+    <h2>{{ nome }}</h2>
+    <img src="/img/{{ chiave }}" alt="Prima pagina {{ nome }}"
+         onclick="ingrandisci(this.src)"
+         onerror="this.onerror=null; this.src='https://via.placeholder.com/500x650?text=Immagine+non+disponibile';">
+    <div class="data data-agg"></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="overlay" id="overlay" onclick="chiudi()">
+  <img id="overlay-img" src="">
+</div>
+
+<script>
+  const oggi = new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.querySelectorAll('.data-agg').forEach(el => el.textContent = 'Aggiornato: ' + oggi);
+
+  function ingrandisci(src) {
+    document.getElementById('overlay-img').src = src;
+    document.getElementById('overlay').classList.add('attivo');
+  }
+  function chiudi() {
+    document.getElementById('overlay').classList.remove('attivo');
+  }
+
+  // --- Gestione preferiti (salvati nel browser, riordinano i blocchi) ---
+  function leggiPreferiti() {
+    try { return JSON.parse(localStorage.getItem('preferiti') || '[]'); }
+    catch(e) { return []; }
+  }
+  function salvaPreferiti(lista) {
+    localStorage.setItem('preferiti', JSON.stringify(lista));
+  }
+  function riordina() {
+    const preferiti = leggiPreferiti();
+    const grid = document.getElementById('grid');
+    const card = Array.from(grid.children);
+    card.sort((a, b) => {
+      const pa = preferiti.indexOf(a.dataset.chiave);
+      const pb = preferiti.indexOf(b.dataset.chiave);
+      const va = pa === -1 ? 999 : pa;
+      const vb = pb === -1 ? 999 : pb;
+      return va - vb;
+    });
+    card.forEach(c => grid.appendChild(c));
+  }
+  function aggiornaStelle() {
+    const preferiti = leggiPreferiti();
+    document.querySelectorAll('.card').forEach(c => {
+      const btn = c.querySelector('.stella');
+      btn.classList.toggle('attiva', preferiti.includes(c.dataset.chiave));
+    });
+  }
+  function toggleFavorito(chiave, btn) {
+    let preferiti = leggiPreferiti();
+    if (preferiti.includes(chiave)) {
+      preferiti = preferiti.filter(p => p !== chiave);
+    } else {
+      preferiti.push(chiave);
+    }
+    salvaPreferiti(preferiti);
+    aggiornaStelle();
+    riordina();
+  }
+
+  riordina();
+  aggiornaStelle();
+</script>
+</body>
+</html>
