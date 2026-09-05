@@ -93,11 +93,11 @@
 <div class="grid" id="grid">
   {% for chiave, nome in giornali.items() %}
   <div class="card" data-chiave="{{ chiave }}" data-nome="{{ nome }}" data-categoria="
-  {%- if chiave in ['corriere', 'repubblica', 'sole24ore', 'ilgiornale'] -%}
+  {%- if chiave in ['corriere', 'repubblica', 'sole24ore', 'ilgiornale', 'libero', 'laverita', 'manifesto', 'avvenire', 'fattoquotidiano', 'stampa', 'domani'] -%}
     nazionale
-  {%- elif chiave in ['stampa', 'domani'] -%}
+  {%- elif chiave == 'sole24ore' -%}
     economia
-  {%- elif chiave in ['quotidianolecce', 'gazzettamezzogiorno'] -%}
+  {%- elif chiave in ['quotidianolecce', 'gazzettamezzogiorno', 'corrieremezzo'] -%}
     regionale
   {%- else -%}
     nazionale
@@ -105,11 +105,11 @@
   ">
     <button class="stella" onclick="toggleFavorito('{{ chiave }}', this)">★</button>
     <h2><span class="categoria-icon" data-icon="
-    {%- if chiave in ['corriere', 'repubblica', 'sole24ore', 'ilgiornale'] -%}
+    {%- if chiave in ['corriere', 'repubblica', 'sole24ore', 'ilgiornale', 'libero', 'laverita', 'manifesto', 'avvenire', 'fattoquotidiano', 'stampa', 'domani'] -%}
       🇮🇹
-    {%- elif chiave in ['stampa', 'domani'] -%}
+    {%- elif chiave == 'sole24ore' -%}
       💼
-    {%- elif chiave in ['quotidianolecce', 'gazzettamezzogiorno'] -%}
+    {%- elif chiave in ['quotidianolecce', 'gazzettamezzogiorno', 'corrieremezzo'] -%}
       🏛️
     {%- else -%}
       🇮🇹
